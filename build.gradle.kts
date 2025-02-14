@@ -1,5 +1,6 @@
 plugins {
 	id("java")
+	id("maven-publish")
 }
 
 group 	= "com.ronreynolds"
@@ -9,8 +10,8 @@ val mainClass = "com.ronreynolds.temp.Main"
 
 // library versions
 val assertJVersion           = "3.24.2"
-val guavaVersion             = "33.2.1-jre"
-val jUnitJupiterVersion      = "5.10.2"  // from build/generated/api/build.gradle
+val guavaVersion             = "33.4.0-jre"
+val jUnitJupiterVersion      = "5.10.2"
 val lombokVersion            = "1.18.32"
 val slf4jVersion             = "1.7.25"
 
@@ -25,8 +26,8 @@ repositories {
 }
 
 dependencies {
-	implementation	("org.slf4j:slf4j-api:$slf4jVersion")
-	runtimeOnly		("org.slf4j:slf4j-simple:$slf4jVersion")
+	implementation			("org.slf4j:slf4j-api:$slf4jVersion")
+	runtimeOnly				("org.slf4j:slf4j-simple:$slf4jVersion")
 
 	// Lombok dependencies
 	compileOnly				("org.projectlombok:lombok:$lombokVersion")
@@ -35,13 +36,21 @@ dependencies {
 	testAnnotationProcessor	("org.projectlombok:lombok:$lombokVersion")
 
 	// test dependencies
-	testImplementation	("org.assertj:assertj-core:$assertJVersion")
-	testImplementation	("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
-	testRuntimeOnly		("org.junit.platform:junit-platform-launcher")
+	testImplementation		("org.assertj:assertj-core:$assertJVersion")
+	testImplementation		("org.junit.jupiter:junit-jupiter:$jUnitJupiterVersion")
+	testRuntimeOnly			("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.compileJava {
 	options.encoding = "UTF-8"
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("maven") {
+			from(components["java"])
+		}
+	}
 }
 
 tasks.create("uberjar", Jar::class) {
@@ -64,5 +73,3 @@ tasks.compileTestJava {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
-
-// java -cp build/classes/java/main/ com.ronreynolds.temp.Main
